@@ -15,6 +15,7 @@ export async function GET(req: NextRequest, { params }: { params?: { id?: string
     return NextResponse.json(campaign);
   } else {
     const campaigns = await Campaign.find();
+    console.log(campaigns.length);
     return NextResponse.json(campaigns);
   }
 }
@@ -27,17 +28,17 @@ export async function POST(req: NextRequest) {
     ...data,
     digestCampaign: data.digestCampaign || false,
     dailyDigest: data.dailyDigest || 'Daily',
-    campaignStatus: data.campaignStatus === 'active' ? 'Active' : 'Inactive',
+    campaignStatus: data.campaignStatus === 'active' ? 'active' : 'inactive',
   });
 
   try {
     await campaign.save();
     return NextResponse.json(campaign);
   } catch (error) {
+    console.error("Error saving campaign:", error);
     return NextResponse.json({ error }, { status: 400 });
   }
 }
-
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   await connectToDb();

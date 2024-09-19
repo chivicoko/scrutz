@@ -47,7 +47,7 @@ const CampaignTable: React.FC<CampaignTableProps> = ({ campaigns, loading, error
 
         // const updatedCampaigns = await getCampaigns();
       } catch (err) {
-        alert('Failed to delete campaign');
+        console.log('Failed to delete campaign');
       } finally {
         setDeletingId(null);
       }
@@ -83,7 +83,7 @@ const CampaignTable: React.FC<CampaignTableProps> = ({ campaigns, loading, error
                         <td className='px-6 py-2 text-xs whitespace-nowrap'>{index + 1}.</td>
                         <td className='px-6 py-2 text-xs whitespace-nowrap'>{campaign.campaignName}</td>
                         <td className='px-6 py-2 text-xs whitespace-nowrap'>{new Date(campaign.startDate).toLocaleDateString()}</td>
-                        <td className={`${campaign.campaignStatus === 'Active' ? 'text-green-500' : 'text-red-700'} px-6 py-2 text-xs whitespace-nowrap`}>{campaign.campaignStatus}</td>
+                        <td className={`${campaign.campaignStatus === 'active' ? 'text-green-500' : 'text-red-700'} px-6 py-2 text-xs whitespace-nowrap`}>{campaign.campaignStatus === 'active' ? "Active" : "Inactive"}</td>
                         <td className='px-6 py-2 text-xs whitespace-nowrap flex space-x-2'>
                         <button onClick={() => handleView(campaign._id)} className='text-[#666666] hover:text-green-700'>
                             <VisibilityOutlined style={{width: '17px', height: '17px'}} />
@@ -112,15 +112,12 @@ const CampaignTable: React.FC<CampaignTableProps> = ({ campaigns, loading, error
         <CampaignDeleteModal
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
-          title="Delete Campaign"
-          description="Are you sure you want to delete this campaign? This action cannot be undone."
         />
       )}
 
       {showDeletedModal && (
         <CampaignDeletedModal
           onClose={handleCloseDeletedModal}
-          title="Campaign Deleted"
         />
       )}
     </>

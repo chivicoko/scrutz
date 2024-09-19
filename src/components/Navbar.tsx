@@ -6,10 +6,12 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { KeyboardArrowDown, Menu, NotificationsOutlined, Search } from '@mui/icons-material';
 import Sidebar from './Sidebar';
-import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, UserButton, useAuth, useUser } from '@clerk/nextjs';
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const {user} = useUser();
+  // console.log(user?.firstName);
 
   const closeSidebar = () => setOpen(false);
 
@@ -65,7 +67,7 @@ const Navbar: React.FC = () => {
                 <span className="px-2 flex items-center justify-between gap-2">
                   <UserButton/>
                   <button className="text-[#666666] flex items-center justify-between gap-1 text-sm">
-                    Big Tech
+                    {user?.firstName || 'Big Tech'}
                     <span className="text-[#333333]"><KeyboardArrowDown /></span>
                   </button>
                 </span>

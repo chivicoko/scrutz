@@ -14,10 +14,17 @@ export const getCampaignById = async (id: string) => {
 };
 
 export const createCampaign = async (campaignData: CampaignCreate) => {
-  const response = await axios.post(API_URL, campaignData);
-  console.log(response.data);
-  return response.data;
+  try {
+    // console.log('Data being sent:', campaignData); // Check the data before sending
+    const response = await axios.post(`${API_URL}`, campaignData);
+    // console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating campaign:', error);
+    throw error;
+  }
 };
+
 
 export const updateCampaign = async (id: string, campaignData: CampaignUpdate) => {
   const response = await axios.put(`${API_URL}/${id}`, campaignData);
@@ -25,6 +32,11 @@ export const updateCampaign = async (id: string, campaignData: CampaignUpdate) =
 };
 
 export const deleteCampaign = async (id: string) => {
-  const response = await axios.delete(`${API_URL}/${id}`);
-  return response.data;
+  try {
+    const response = await axios.delete(`${API_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete campaign:', error);
+    throw error;
+  }
 };

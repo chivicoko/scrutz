@@ -17,7 +17,7 @@ const CampaignSchema: Schema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date },
   digestCampaign: { type: Boolean, default: false },
-  linkedKeywords: { type: [String], required: true },
+  linkedKeywords: [{ type: [String], required: true }],
   dailyDigest: { type: String, enum: ['Daily', 'Weekly', 'Monthly'], required: true },
   campaignStatus: { type: String, enum: ['active', 'inactive'], default: 'active' },
 });

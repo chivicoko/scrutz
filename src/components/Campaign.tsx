@@ -107,34 +107,70 @@ const CampaignPage = () => {
     return `${year}-${month}-${day}`;
   };
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (!validateForm()) return;
+
+  //   setLoading(true);
+  //   setError(null);
+
+  //   try {
+  //     if (isEditMode) {
+  //       await updateCampaign(id!, {
+  //         ...formData,
+  //         startDate: formatDateToISO(formData.startDate),
+  //         endDate: formatDateToISO(formData.endDate),
+  //         linkedKeywords: keywords,
+  //         campaignStatus: formData.campaignStatus,
+  //         id,
+  //       });
+  //     } else {
+  //       await createCampaign({
+  //         ...formData,
+  //         startDate: formatDateToISO(formData.startDate),
+  //         endDate: formatDateToISO(formData.endDate),
+  //         linkedKeywords: keywords,
+  //         campaignStatus: formData.campaignStatus, 
+  //       });
+  //     }
+  //     console.log(formData);
+  //     router.push('/campaign');
+  //   } catch (err) {
+  //     setError('Failed to save the campaign. Please try again.');
+  //     console.error('Error saving campaign:', err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!validateForm()) return;
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
+      // console.log('Form Data Before Submission:', formData);
+  
+      const payload = {
+        ...formData,
+        startDate: formatDateToISO(formData.startDate),
+        endDate: formatDateToISO(formData.endDate),
+        linkedKeywords: keywords,
+        campaignStatus: formData.campaignStatus, 
+      };
+  
+      // console.log('Payload:', payload);
+  
       if (isEditMode) {
-        await updateCampaign(id!, {
-          ...formData,
-          startDate: formatDateToISO(formData.startDate),
-          endDate: formatDateToISO(formData.endDate),
-          linkedKeywords: keywords,
-          campaignStatus: formData.campaignStatus,
-          id,
-        });
+        await updateCampaign(id!, { ...payload, id });
       } else {
-        await createCampaign({
-          ...formData,
-          startDate: formatDateToISO(formData.startDate),
-          endDate: formatDateToISO(formData.endDate),
-          linkedKeywords: keywords,
-          campaignStatus: formData.campaignStatus, 
-        });
+        await createCampaign(payload);
       }
-      console.log(formData);
+  
       router.push('/campaign');
     } catch (err) {
       setError('Failed to save the campaign. Please try again.');
@@ -143,7 +179,7 @@ const CampaignPage = () => {
       setLoading(false);
     }
   };
-
+  
   return (
     <section className='px-6 md:px-16 lg:pl-[85px] lg:pr-52 pt-6'>
         {isEditMode ? 

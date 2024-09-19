@@ -5,8 +5,6 @@ import React from 'react';
 interface CampaignDeleteModalProps {
   onConfirm: () => void;
   onCancel: () => void;
-  title: string;
-  description: string;
 }
 
 const CampaignDeleteModal: React.FC<CampaignDeleteModalProps> = ({ onConfirm, onCancel }) => {

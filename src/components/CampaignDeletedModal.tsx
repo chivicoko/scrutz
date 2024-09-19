@@ -4,7 +4,6 @@ import React from 'react';
 
 interface CampaignDeletedModalProps {
   onClose: () => void;
-  title: string;
 }
 
 const CampaignDeletedModal: React.FC<CampaignDeletedModalProps> = ({}) => {
