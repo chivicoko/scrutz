@@ -53,8 +53,35 @@ const CampaignPage = () => {
   const handleRemoveKeyword = (keywordToRemove: string) => {
     setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove));
   };
-
+  
   useEffect(() => {
+    
+    const fetchCampaign = async (id: string) => {
+      try {
+        setFetchingCampaign(true);
+        const campaign = await getCampaignById(id);
+        // console.log(campaign);
+
+        setFormData({
+          campaignName: campaign.campaignName,
+          campaignDescription: campaign.campaignDescription,
+          startDate: formatISOToDate(campaign.startDate),
+          endDate: formatISOToDate(campaign.endDate),
+          digestCampaign: campaign.digestCampaign,
+          linkedKeywords: '',
+          dailyDigest: campaign.dailyDigest || '',
+          campaignStatus: campaign.campaignStatus || 'active',
+        });
+
+        setKeywords(campaign.linkedKeywords);
+        setFetchingCampaign(false);
+      } catch (err) {
+        console.error('Error fetching campaign:', err);
+        setError('Failed to fetch campaign.');
+        setFetchingCampaign(false);
+      }
+    };
+    
     if (id) {
       setIsEditMode(true);
       fetchCampaign(id);
@@ -62,32 +89,6 @@ const CampaignPage = () => {
       setFetchingCampaign(false);
     }
   }, [id]);
-
-  const fetchCampaign = async (id: string) => {
-    try {
-      setFetchingCampaign(true);
-      const campaign = await getCampaignById(id);
-      // console.log(campaign);
-
-      setFormData({
-        campaignName: campaign.campaignName,
-        campaignDescription: campaign.campaignDescription,
-        startDate: formatISOToDate(campaign.startDate),
-        endDate: formatISOToDate(campaign.endDate),
-        digestCampaign: campaign.digestCampaign,
-        linkedKeywords: '',
-        dailyDigest: campaign.dailyDigest || '',
-        campaignStatus: campaign.campaignStatus || 'active',
-      });
-
-      setKeywords(campaign.linkedKeywords);
-      setFetchingCampaign(false);
-    } catch (err) {
-      console.error('Error fetching campaign:', err);
-      setError('Failed to fetch campaign.');
-      setFetchingCampaign(false);
-    }
-  };
 
   const formatISOToDate = (isoDate: string): string => {
     const date = new Date(isoDate);

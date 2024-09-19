@@ -109,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show = 'hidden', closeSidebar = () =>
                     sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 </div>
-                <p className="text-xs text-center text-[#666666]">We're readily available to provide help</p>
+                <p className="text-xs text-center text-[#666666]">We are readily available to provide help</p>
                 <button className="text-xs border border-[#247b7b] text-[#247b7b] hover:text-white bg-transparent hover:bg-[#247b7b] hover:border-transparent rounded-[4px] py-2 px-6">Get help</button>
             </div>
         </div>

@@ -74,7 +74,7 @@ import Campaign from '../../../models/campaignModel';
 import { connectToDb } from '@/lib/mongodb';
 
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   await connectToDb();
   const campaigns = await Campaign.find();
   return NextResponse.json(campaigns);

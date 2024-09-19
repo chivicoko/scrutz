@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Campaign } from '@/utils/types';
 import { VisibilityOutlined, DeleteOutline, EditNote } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import { deleteCampaign, getCampaigns } from '@/services/api';
+import { deleteCampaign } from '@/services/api';
 import CampaignDeleteModal from '@/components/CampaignDeleteModal';
 import CampaignDeletedModal from '@/components/CampaignDeletedModal';
 import Loading from '../app/loading';

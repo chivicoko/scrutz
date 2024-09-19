@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 export default function BasicPagination() {
   return (
     <Stack spacing={1}>
-      <Pagination count={15} color="success" />
+      <Pagination count={15} color="secondary" />
     </Stack>
   );
 }

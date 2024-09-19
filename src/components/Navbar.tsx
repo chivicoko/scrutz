@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { KeyboardArrowDown, Menu, NotificationsOutlined, Search } from '@mui/icons-material';
 import Sidebar from './Sidebar';
-import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, UserButton, useAuth, useUser } from '@clerk/nextjs';
+import { ClerkLoaded, ClerkLoading, SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 
 const Navbar: React.FC = () => {
   const [open, setOpen] = useState(false);
