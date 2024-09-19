@@ -5,9 +5,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { ArrowBack } from '@mui/icons-material';
 import { createCampaign, getCampaignById, updateCampaign } from '@/services/api';
 import { FormData } from '@/utils/types';
+import Loading from '@/app/loading';
 
 const CampaignPage = () => {
-  const router = useRouter(); 
+  const router = useRouter();
   const params = useParams();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -23,6 +24,7 @@ const CampaignPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [fetchingCampaign, setFetchingCampaign] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -56,26 +58,34 @@ const CampaignPage = () => {
     if (id) {
       setIsEditMode(true);
       fetchCampaign(id);
+    } else {
+      setFetchingCampaign(false);
     }
   }, [id]);
 
   const fetchCampaign = async (id: string) => {
     try {
+      setFetchingCampaign(true);
       const campaign = await getCampaignById(id);
+      // console.log(campaign);
+
       setFormData({
         campaignName: campaign.campaignName,
         campaignDescription: campaign.campaignDescription,
         startDate: formatISOToDate(campaign.startDate),
         endDate: formatISOToDate(campaign.endDate),
         digestCampaign: campaign.digestCampaign,
-        linkedKeywords: campaign.linkedKeywords.join(', '),
+        linkedKeywords: '',
         dailyDigest: campaign.dailyDigest || '',
         campaignStatus: campaign.campaignStatus || 'active',
       });
+
       setKeywords(campaign.linkedKeywords);
+      setFetchingCampaign(false);
     } catch (err) {
       console.error('Error fetching campaign:', err);
       setError('Failed to fetch campaign.');
+      setFetchingCampaign(false);
     }
   };
 
@@ -107,70 +117,29 @@ const CampaignPage = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (!validateForm()) return;
-
-  //   setLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     if (isEditMode) {
-  //       await updateCampaign(id!, {
-  //         ...formData,
-  //         startDate: formatDateToISO(formData.startDate),
-  //         endDate: formatDateToISO(formData.endDate),
-  //         linkedKeywords: keywords,
-  //         campaignStatus: formData.campaignStatus,
-  //         id,
-  //       });
-  //     } else {
-  //       await createCampaign({
-  //         ...formData,
-  //         startDate: formatDateToISO(formData.startDate),
-  //         endDate: formatDateToISO(formData.endDate),
-  //         linkedKeywords: keywords,
-  //         campaignStatus: formData.campaignStatus, 
-  //       });
-  //     }
-  //     console.log(formData);
-  //     router.push('/campaign');
-  //   } catch (err) {
-  //     setError('Failed to save the campaign. Please try again.');
-  //     console.error('Error saving campaign:', err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!validateForm()) return;
-  
+
     setLoading(true);
     setError(null);
-  
+
     try {
-      // console.log('Form Data Before Submission:', formData);
-  
       const payload = {
         ...formData,
         startDate: formatDateToISO(formData.startDate),
         endDate: formatDateToISO(formData.endDate),
         linkedKeywords: keywords,
-        campaignStatus: formData.campaignStatus, 
+        campaignStatus: formData.campaignStatus,
       };
-  
-      // console.log('Payload:', payload);
-  
+
       if (isEditMode) {
         await updateCampaign(id!, { ...payload, id });
       } else {
         await createCampaign(payload);
       }
-  
+
       router.push('/campaign');
     } catch (err) {
       setError('Failed to save the campaign. Please try again.');
@@ -179,13 +148,18 @@ const CampaignPage = () => {
       setLoading(false);
     }
   };
+
+  if (fetchingCampaign) {
+    return <Loading/>;
+  }
+
   
   return (
     <section className='px-6 md:px-16 lg:pl-[85px] lg:pr-52 pt-6'>
         {isEditMode ? 
         <button
             className='flex items-center gap-1 md:text-sm mb-5 transition-transform duration-300 ease-in-out transform hover:-translate-x-1'
-            onClick={() => router.push('/campaignlist')}
+            onClick={() => router.push('/campaign')}
         >
             <ArrowBack /> Back
         </button>
@@ -277,6 +251,33 @@ const CampaignPage = () => {
 
         : null}
 
+        {isEditMode ?
+        <div className='flex flex-col text-[#666666]'>
+          <label htmlFor="linkedKeywords" className='text-xs'>
+            Linked Keywords<span className='text-red-600'>*</span>
+          </label>
+          <div className='border h-fit rounded-[4px] focus-within:border-[#247B7B] focus-within:ring-1 focus-within:ring-[#247B7B] leading-tight focus:outline-0 focus:ring-0'>
+            <span className='flex gap-2 pt-2 px-2'>
+              {keywords.map((keyword, index) => (
+                <span key={index} className='flex gap-2 items-center justify-between py-2 px-3 rounded-[4px] bg-[#247b7b] text-white'>
+                  {keyword}
+                  <button type='button' onClick={() => handleRemoveKeyword(keyword)}>x</button>
+                </span>
+              ))}
+            </span>
+            <textarea
+              name="linkedKeywords"
+              id="linkedKeywords"
+              onKeyDown={handleKeyPress}
+              onChange={handleInputChange}
+              value={formData.linkedKeywords}
+              placeholder='To add keywords, type your keyword and press enter'
+              className='w-full placeholder:text-xs min-h-9 rounded-[4px] py-2 px-[10px] outline-none border-0'
+            />
+          </div>
+        </div>
+
+        :
         <div className='flex flex-col text-[#666666]'>
             <label htmlFor="linkedKeywords" className='text-xs'>Linked Keywords<span className='text-red-600'>*</span></label>
             <div className='border h-fit rounded-[4px] focus-within:border-[#247B7B] focus-within:ring-1 focus-within:ring-[#247B7B] leading-tight focus:outline-0 focus:ring-0'>
@@ -294,7 +295,8 @@ const CampaignPage = () => {
                 </span>
                 <textarea name="linkedKeywords" id="linkedKeywords" onKeyDown={handleKeyPress} onChange={handleInputChange} value={formData.linkedKeywords} placeholder='To add keywords, type your keyword and press enter' className='w-full placeholder:text-xs min-h-9 rounded-[4px] py-2 px-[10px] outline-none border-0'></textarea>
             </div>
-        </div>
+        </div> 
+        }
                   
         {isEditMode ? 
         <>      
